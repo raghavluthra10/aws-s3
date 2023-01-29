@@ -3,9 +3,12 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./.env" });
 
-const s3 = new AWS.S3({
+AWS.config.update({
    accessKeyId: process.env.AWS_ACCESS_KEY,
    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+   region: process.env.AWS_REGION,
 });
 
-module.exports = s3;
+const s3 = new AWS.S3();
+
+module.exports = { s3 };
