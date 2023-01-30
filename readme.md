@@ -8,7 +8,4 @@
 1. First login/sign up to aws s3 console and create a bucket.
 2. Go to IAM section, create a new policy that gives read and write permissions and attach that policy to a new user (this is the user who's credentials will be used by the node server to communicate with aws).
 3. To generate the credentials of the newly created user, go to "users > security credentials > access keys" and click "Create access keys"
-
-## Note
-
--  In this repo, i'm using v2 of aws and multer-s3, as they are compatible with each other.
+4. These credentials i.e."aws access key" and "aws secret access key" will be used configuring connection with aws.
