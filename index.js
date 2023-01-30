@@ -1,10 +1,10 @@
 const fs = require("fs");
 const multer = require("multer");
-const multerS3 = require("multer-s3");
 const dotenv = require("dotenv");
 const express = require("express");
+const { uploadFile } = require("./aws-config");
 
-const { upload } = require("./upload");
+const upload = multer({ dest: "photos/" });
 
 dotenv.config({ path: "./.env" });
 
@@ -16,20 +16,22 @@ app.get("/", function (req, res) {
    res.send("Hello world");
 });
 
-const singleUpload = upload.single("image");
+app.post("/image", upload.single("image"), async function (req, res) {
+   try {
+      const originalName = req.file?.originalname;
+      const fileName = req.file?.filename;
+      const filePath = req.file?.path;
 
-app.post("/image", function (req, res) {
-   singleUpload(req, res, function (err, some) {
-      if (err) {
-         return res
-            .status(422)
-            .send({
-               errors: [{ title: "Image Upload Error", detail: err.message }],
-            });
-      }
+      const result = await uploadFile(filePath);
 
-      return res.json({ imageUrl: req.file.location });
-   });
+      res.json({
+         success: true,
+         message: "Photo uploaded successfully",
+      });
+   } catch (error) {
+      console.log(error);
+      res.json({ success: false, message: "Internal server error" });
+   }
 });
 
 app.listen(port, () => {
