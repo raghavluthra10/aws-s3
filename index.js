@@ -17,6 +17,7 @@ app.get("/", function (req, res) {
    res.send("Hello world");
 });
 
+// post image
 app.post("/image", upload.single("image"), async function (req, res) {
    try {
       const originalName = req.file?.originalname;
@@ -60,10 +61,15 @@ app.post("/image", upload.single("image"), async function (req, res) {
       });
    } catch (error) {
       console.log(error);
-      res.json({ success: false, message: "Internal server error" });
+      res.json({
+         success: false,
+         message: "internal server error",
+         error: error,
+      });
    }
 });
 
+// download single image
 app.get("/image/:key", async function (req, res) {
    try {
       const key = req.params.key;
@@ -84,7 +90,36 @@ app.get("/image/:key", async function (req, res) {
       console.log("error", error);
       res.json({
          success: false,
-         message: error,
+         message: "internal server error",
+         error: error,
+      });
+   }
+});
+
+// get all images
+app.get("/images", async function (req, res) {
+   try {
+      function listObjectsFunction() {
+         const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            MaxKeys: 10,
+         };
+
+         return s3.listObjects(params).promise();
+      }
+
+      const result = await listObjectsFunction();
+
+      res.json({
+         success: true,
+         data: result,
+      });
+   } catch (error) {
+      console.log("error", error);
+      res.json({
+         success: false,
+         message: "internal server error",
+         error: error,
       });
    }
 });
