@@ -10,22 +10,4 @@ const s3 = new AWS.S3({
    region: process.env.AWS_REGION,
 });
 
-function uploadFile(file) {
-   try {
-      const fileStream = fs.createReadStream(file);
-
-      const uploadParams = {
-         Bucket: process.env.AWS_BUCKET_NAME,
-         // Add the required 'Key' parameter using the 'path' module.
-         Key: path.basename(file),
-         // Add the required 'Body' parameter
-         Body: fileStream,
-      };
-
-      return s3.upload(uploadParams).promise();
-   } catch (error) {
-      console.log(error);
-   }
-}
-
-module.exports = { uploadFile };
+module.exports = { s3 };
